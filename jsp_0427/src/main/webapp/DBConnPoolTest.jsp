@@ -1,0 +1,25 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: admin
+  Date: 2023-04-27
+  Time: 오후 12:15
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@ page import="com.bitc.jsp_0427.DBConnPool"%>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <title>커넥션 풀 테스트</title>
+</head>
+<body>
+<div class="container">
+  <h2>커넥션 풀 테스트</h2>
+  <%
+    DBConnPool pool = new DBConnPool();
+    pool.close();
+  %>
+</div>
+</body>
+</html>
