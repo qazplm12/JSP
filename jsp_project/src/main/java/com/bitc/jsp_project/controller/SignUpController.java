@@ -26,7 +26,10 @@ public class SignUpController extends HttpServlet {
 
         if (confirm > 0) {
             JSFunc.alertBack("이미 존재하는 ID 입니다.", resp);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
         } else {
             String result = dao.addMember(userId, userName, userEmail, userPass);
         }
