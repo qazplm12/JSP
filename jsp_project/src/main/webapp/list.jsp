@@ -51,7 +51,7 @@
                         <%-- <fmt:formatDate value="${today}" pattern="MM-dd (HH:mm)" var="now"/>--%>
                         <%-- <span></span>--%>
                         </td>
-                        <td class="py-4"><a href="${item.postIdx}">${item.postTitle}</a>
+                        <td class="py-4"><a href="/view.do?postNum=${item.postNum}">${item.postTitle}</a>
                         </td>
                         <td class="py-4">${item.postWriter}</td>
                         <td class="py-4">${item.postVisits}</td>

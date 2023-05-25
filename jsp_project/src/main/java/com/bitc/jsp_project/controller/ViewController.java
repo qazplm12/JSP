@@ -11,31 +11,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(value = "/list.do")
-public class ListController extends HttpServlet {
+@WebServlet(value = "/view.do")
+public class ViewController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String cate = "";
-
-        if (req.getParameter("category") != null) {
-            cate = req.getParameter("category");
-            req.setAttribute("category", req.getParameter("category"));
-        } else{
-            req.setAttribute("category", "모든 게시물");
-
-        }
+        int idx = Integer.parseInt(req.getParameter("postNum"));
 
         DAO dao = new DAO();
-        List<PostsDTO> boardList = dao.selectBoardList(cate);
+
+        PostsDTO board = dao.selectBoardDetails(idx);
         List<PostsDTO> categories = dao.selectCategory();
+        dao.updatePostVisits(idx);
         dao.dbClose();
 
 
-
-        req.setAttribute("boardList", boardList);
+        req.setAttribute("board", board);
         req.setAttribute("categories", categories);
-        req.getRequestDispatcher("/list.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view.jsp").forward(req, resp);
+
     }
 }

@@ -14,73 +14,38 @@
     <title>Title</title>
 </head>
 <body>
-<header>
-    <div class="offcanvas offcanvas-start" id="mySideMenu">
-        <div class="offcanvas-header">
-            <h1 class="offcanvas-title">.log</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body">
-            <%-- 카테고리 리스트--%>
-                <c:forEach items="${categories}" var="item" varStatus="loop">
-                    <h2><a href="/list.do?category=${item.category}">${item.category}</a></h2>
-                </c:forEach>
-        </div>
-    </div>
-    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-        <%-- 햄버거 버튼 --%>
-        <button type="button" class="navbar-brand ms-3" data-bs-toggle="offcanvas" data-bs-target="#mySideMenu">
-            <img src="" alt="asd"></button>
-        <ul class="navbar-nav ms-auto me-4">
-            <%-- 로그인 시 인사말, 유저 이미지 --%>
-            <li class="nav-item"><a href="#" class="nav-link"><img src="" alt="이미지"></a></li>
-            <%-- 로그인시 로그아웃 버튼--%>
-            <li class="nav-item"><a href="#" class="nav-link">로그인</a></li>
-
-            <button type="button" id="login-btn" class="btn bt-dark text-white" data-bs-toggle="modal"
-                    data-bs-target="#modal-login">로그인
-            </button>
-
-            <%-- 로그인 창--%>
-            <div class="modal fade" id="modal-login">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-body">
-                            <div class="d-flex justify-content-end">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <h2 class="modal-title text-center my-4">로그인</h2>
-                            <%-- 로 전송 --%>
-                            <form action="" class="form-control">
-                                <div class="my-3 p-2">
-                                    <label for="user-id" class="form-label">아이디</label>
-                                    <input type="text" class="form-control" id="user-id" name="userId">
-                                </div>
-                                <div class="my-3 p-2">
-                                    <label for="user-pw" class="form-label">비밀번호</label>
-                                    <input type="password" class="form-control" id="user-pw" name="userPw">
-                                </div>
-                                <div class="my-4 d-grid gap-3">
-                                    <button type="submit" class="btn btn-primary">로그인</button>
-                                    <button type="button" class="btn btn-secondary">회원가입</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </ul>
-    </nav>
-    <div>
-        <h2 class="my-4 text-center">메인 페이지</h2>
-    </div>
-</header>
+<c:import url="layout/header.jsp"/>
 
 <%-- boardList 가져오기 --%>
 <main>
     <div class="container">
-        <p></p>
+        <div class="col-10 mx-auto my-5">
+            <div class="mb-5 border-bottom d-flex justify-content-between text-center">
+                <p class="ms-2">최신 게시물 </p>
+                <a href="list.do" class="link-secondary">더보기</a>
+            </div>
+            <div class="row">
+                <c:choose>
+                    <c:when test="empty boardList">
+                        <h1>등록된 게시물이 없습니다.</h1>
+                    </c:when>
+                    <c:otherwise>
+                        <c:forEach items="${boardList}" var="item" varStatus="loop" end="7">
+                            <div class="col-3 my-4">
+                                    <%--                            <p class="py-4">${item.postDate}</p>--%>
+                                    <%-- 최신 게시물 표시 --%>
+                                    <%-- <c:set var="today" value="<%= new java.util.Date() %>"/>--%>
+                                    <%-- <fmt:formatDate value="${today}" pattern="MM-dd (HH:mm)" var="now"/>--%>
+                                    <%-- <span></span>--%>
+                                <a href="/view.do?postNum=${item.postNum}"><img src="" alt="이미지" width="200px"; height= 150px"></a>
+                                <p class="m-0">${item.postTitle}</p>
+                                <span class="text-muted">${item.postWriter}</span>
+                            </div>
+                        </c:forEach>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
     </div>
 </main>
 </body>

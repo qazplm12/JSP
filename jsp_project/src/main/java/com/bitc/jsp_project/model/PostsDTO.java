@@ -10,11 +10,11 @@ public class PostsDTO {
     private String postDate;
     private int postVisits;
 
-    public int getPostIdx() {
+    public int getPostNum() {
         return postNum;
     }
 
-    public void setPostIdx(int postNum) {
+    public void setPostNum(int postNum) {
         this.postNum = postNum;
     }
 
