@@ -17,21 +17,29 @@ public class WriteController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        int idx = Integer.parseInt(req.getParameter("postNum"));
+        int idx = 0;
+        String userId = "";
+
+        if (req.getParameter("postNum") != null) {
+            idx = Integer.parseInt(req.getParameter("postNum"));
+        } else {
+            userId = req.getParameter("postWriter");
+        }
+
         String category = req.getParameter("category");
         String title = req.getParameter("postTitle");
         String content = req.getParameter("postContent");
 
+        DAO dao = new DAO();
         if (idx > 0) {
-            DAO dao = new DAO();
             dao.editPost(idx, category, title, content);
             dao.dbClose();
+            resp.sendRedirect("/view.do"+ "?postNum=" + idx);
+        } else {
+            dao.addPost(category, title, content, userId);
+            dao.dbClose();
+            resp.sendRedirect("/list.do");
         }
-
-        resp.sendRedirect("/view.do"+ "?postNum=" + idx);
-//        req.setAttribute("board", board);
-//        req.setAttribute("categories", categories);
-//        req.getRequestDispatcher("/edit.jsp").forward(req, resp);
 
     }
 }

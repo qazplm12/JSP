@@ -11,6 +11,7 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <title>Title</title>
 </head>
 <body>
@@ -21,8 +22,8 @@
     <div class="container">
         <div class="col-10 mx-auto my-5">
             <div class="mb-5 border-bottom d-flex justify-content-between text-center">
-                <p class="ms-2">최신 게시물 </p>
-                <a href="list.do" class="link-secondary">더보기</a>
+                <h4 class="ms-2">최신 게시물 </h4>
+                <a href="list.do" class="link-secondary text-decoration-none"><strong>더보기</strong></a>
             </div>
             <div class="row">
                 <c:choose>
@@ -37,9 +38,11 @@
                                     <%-- <c:set var="today" value="<%= new java.util.Date() %>"/>--%>
                                     <%-- <fmt:formatDate value="${today}" pattern="MM-dd (HH:mm)" var="now"/>--%>
                                     <%-- <span></span>--%>
-                                <a href="/view.do?postNum=${item.postNum}"><img src="" alt="이미지" width="200px"; height= 150px"></a>
+                                <a href="/view.do?postNum=${item.postNum}">
+                                    <img src="" alt="이미지" width="200px" height=150px">
+                                </a>
                                 <p class="m-0">${item.postTitle}</p>
-                                <span class="text-muted">${item.postWriter}</span>
+                                <span class="text-muted">작성자 ${item.postWriter}</span>
                             </div>
                         </c:forEach>
                     </c:otherwise>

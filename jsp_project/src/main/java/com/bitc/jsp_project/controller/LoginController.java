@@ -34,6 +34,7 @@ public class LoginController extends HttpServlet {
             session.setAttribute("failed", true);
         } else {
             session.setAttribute("userName", userName);
+            session.setAttribute("userId", userId);
             session.setMaxInactiveInterval(60 * 30);
         }
         resp.sendRedirect(from + "?" + queryStr);

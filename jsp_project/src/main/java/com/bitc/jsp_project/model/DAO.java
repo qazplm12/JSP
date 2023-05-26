@@ -18,16 +18,16 @@ public class DAO extends JDBConnect {
         boolean useCate = false;
 
         if (cate.equals("")) {
-            query = "SELECT num, title, id, category, DATE_FORMAT(postdate, '%m-%d (%h:%i)') AS postdate, visitcount FROM posts ORDER BY postdate DESC ";
+            query = "SELECT num, title, id, category, DATE_FORMAT(postdate, '%m-%d (%H:%i)') AS postdate, visitcount FROM posts ORDER BY postdate DESC ";
         } else {
-            query = "SELECT num, title, id, category, DATE_FORMAT(postdate, '%m-%d (%h:%i)') AS postdate, visitcount FROM posts WHERE category = ? ORDER BY postdate DESC ";
+            query = "SELECT num, title, id, category, DATE_FORMAT(postdate, '%m-%d (%H:%i)') AS postdate, visitcount FROM posts WHERE category = ? ORDER BY postdate DESC ";
             useCate = true;
         }
 
         try {
             pstmt = conn.prepareStatement(query);
             // 카테고리 값 받을 수 있게 설정
-            if(useCate){
+            if (useCate) {
                 pstmt.setString(1, cate);
             }
             rs = pstmt.executeQuery();
@@ -35,7 +35,7 @@ public class DAO extends JDBConnect {
             while (rs.next()) {
                 PostsDTO board = new PostsDTO();
 
-                board.setPostIdx(rs.getInt("num"));
+                board.setPostNum(rs.getInt("num"));
                 board.setPostTitle(rs.getString("title"));
                 board.setPostWriter(rs.getString("id"));
                 board.setCategory(rs.getString("category"));
@@ -80,54 +80,27 @@ public class DAO extends JDBConnect {
         return categories;
     }
 
-    // 데이터 베이스에 글 등록하기
-    public int insertBoard(PostsDTO board) {
-        int result = 0;
-
-        String query = "INSERT INTO mvcboard ";
-        query += "(post_writer, post_title, post_content, post_pass, post_date, post_ofile, post_sfile ) ";
-        query += "VALUES(?, ?, ?, ?, NOW(), ?, ?); ";
-
-        try {
-            pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, board.getPostWriter());
-            pstmt.setString(2, board.getPostTitle());
-            pstmt.setString(3, board.getPostContent());
-
-            result = pstmt.executeUpdate();
-
-
-        } catch (Exception e) {
-            System.out.println("***** 데이터 베이스에 INSERT 중 오류 발생 *****");
-            System.out.println("***** Error " + e.getMessage() + "*****");
-        }
-
-
-        return result;
-
-    }
-
-    // 게시물 상세 정보 가져오기
-    public PostsDTO selectBoardDetails(int boardIdx) {
+    public PostsDTO selectBoardDetails(int postNum) {
         PostsDTO board = new PostsDTO();
 
-        String query = "SELECT post_idx, post_title, post_content, post_writer, post_date, post_ofile, post_sfile, post_visits, post_dn_count ";
-        query += "FROM mvcboard ";
-        query += "WHERE post_idx = ?;";
+        String query = "SELECT *";
+        query += "FROM posts ";
+        query += "WHERE num = ?;";
 
         try {
             pstmt = conn.prepareStatement(query);
 
-            pstmt.setInt(1, boardIdx);
+            pstmt.setInt(1, postNum);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                board.setPostIdx(rs.getInt("post_idx"));
-                board.setPostTitle(rs.getString("post_title"));
-                board.setPostContent(rs.getString("post_content"));
-                board.setPostWriter(rs.getString("post_writer"));
-                board.setPostDate(rs.getString("post_date"));
-                board.setPostVisits(rs.getInt("post_visits"));
+                board.setPostNum(rs.getInt("num"));
+                board.setCategory(rs.getString("category"));
+                board.setPostTitle(rs.getString("title"));
+                board.setPostContent(rs.getString("content"));
+                board.setPostWriter(rs.getString("id"));
+                board.setPostDate(rs.getString("postdate"));
+                board.setPostVisits(rs.getInt("visitcount"));
             }
         } catch (SQLException e) {
             System.out.println("***** 데이터베이스에서 SELECT 중 오류가 발생했습니다. *****");
@@ -139,21 +112,40 @@ public class DAO extends JDBConnect {
         return board;
     }
 
-    public boolean equalsPassword(int postIdx, String postPass) {
-        boolean result = false;
-        String query = "SELECT count(*) AS cnt ";
-        query += "FROM mvcboard ";
-        query += "WHERE post_idx = ? AND post_pass = ? ";
+    public void updatePostVisits(int postNum) {
+        String query = "UPDATE posts SET visitcount = visitcount + 1 ";
+        query += "WHERE num = ? ";
 
         try {
             pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, postIdx);
-            pstmt.setString(2, postPass);
+            pstmt.setInt(1, postNum);
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("***** 데이터 베이스에 UPDATE 중 오류 발생 *****");
+            System.out.println("***** Error : " + e.getMessage() + " *****");
+            e.printStackTrace();
+        }
+    }
+
+
+    public String checkUser(String userId, String userPw) {
+        String userName = "";
+
+        String query = "SELECT count(*) AS cnt, name ";
+        query += "FROM members ";
+        query += "WHERE id = ? AND pass = ? ";
+
+        try {
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, userId);
+            pstmt.setString(2, userPw);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 if (rs.getInt("cnt") == 1) {
-                    result = true;
+                    userName = rs.getString("name");
                 }
             }
         } catch (SQLException e) {
@@ -161,42 +153,82 @@ public class DAO extends JDBConnect {
             System.out.println("***** Error : " + e.getMessage() + "*****");
         }
 
+        return userName;
+    }
+
+    public int checkUserId(String userId) {
+        int result = 0;
+
+        String query = "SELECT count(id) AS cnt FROM members ";
+        query += "WHERE id = ? ";
+
+        try {
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, userId);
+
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                result = rs.getInt("cnt");
+            }
+        } catch (SQLException e) {
+            System.out.println("SELECT 사용 시 오류가 발생했습니다");
+            e.printStackTrace();
+        }
+
         return result;
     }
 
-    public int deleteBoard(int postIdx) {
-        int result = 0;
+    public String addMember(String userId, String userName, String userEmail, String userPass) {
+        String result = "";
 
-        String query = "DELETE FROM mvcboard WHERE post_idx = ? ";
+        MembersDTO member = new MembersDTO();
+
+        member.setId(userId);
+        member.setName(userName);
+        member.setEmail(userEmail);
+        member.setPass(userPass);
+
+        String query = "INSERT INTO members ";
+        query += "(id, pass, name, email, grade) ";
+        query += "VALUES(?, ?, ?, ?, 0)";
+
         try {
             pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, postIdx);
+            pstmt.setString(1, member.getId());
+            pstmt.setString(2, member.getPass());
+            pstmt.setString(3, member.getName());
+            pstmt.setString(4, member.getEmail());
 
-            result = pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("***** 데이터 베이스에서 DELETE 중 오류 발생 *****");
-            System.out.println("***** Error : " + e.getMessage() + " *****");
-            e.printStackTrace();
+            pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println("***** 데이터 베이스에 INSERT 중 오류 발생 *****");
+            System.out.println("***** Error " + e.getMessage() + "*****");
         }
         return result;
     }
 
-    public int updateBoard(PostsDTO board) {
-        int result = 0;
+    public void editPost(int idx, String category, String title, String content) {
 
-        String query = "UPDATE mvcboard SET post_title = ?, post_writer = ?, post_pass = ?, ";
-        query += "post_content = ?, post_date = NOW() ";
-        query += "WHERE post_idx = ?";
+        String query = "UPDATE posts SET category = ?, title = ?, content = ? ";
+        query += "WHERE num = ?";
+
+        PostsDTO board = new PostsDTO();
+
+        board.setPostNum(idx);
+        board.setCategory(category);
+        board.setPostTitle(title);
+        board.setPostContent(content);
 
         try {
             pstmt = conn.prepareStatement(query);
 
-            pstmt.setString(1, board.getPostTitle());
-            pstmt.setString(2, board.getPostWriter());
-            pstmt.setString(4, board.getPostContent());
-            pstmt.setInt(5, board.getPostIdx());
+            pstmt.setString(1, board.getCategory());
+            pstmt.setString(2, board.getPostTitle());
+            pstmt.setString(3, board.getPostContent());
+            pstmt.setInt(4, board.getPostNum());
 
-            result = pstmt.executeUpdate();
+            pstmt.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println("***** 데이터 베이스에 UPDATE 중 오류 발생 *****");
@@ -204,40 +236,116 @@ public class DAO extends JDBConnect {
             e.printStackTrace();
         }
 
-        return result;
     }
 
-    public void updateBoardVisits(int postIdx) {
-        String query = "UPDATE mvcboard SET post_visits = post_visits + 1 ";
-        query += "WHERE post_idx = ? ";
+    public void deletePost(int idx) {
+
+        String query = "DELETE FROM posts WHERE num = ? ";
 
         try {
             pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, postIdx);
+            pstmt.setInt(1, idx);
 
             pstmt.executeUpdate();
-
         } catch (SQLException e) {
-            System.out.println("***** 데이터 베이스에 UPDATE 중 오류 발생 *****");
+            System.out.println("***** 데이터 베이스에서 DELETE 중 오류 발생 *****");
             System.out.println("***** Error : " + e.getMessage() + " *****");
             e.printStackTrace();
         }
     }
 
-    public void updateBoardDownCount(int postIdx) {
-        String query = "UPDATE mvcboard SET post_dn_count = post_dn_count + 1 ";
-        query += "WHERE post_idx = ? ";
+
+    public void addPost(String category, String title, String content, String userId) {
+
+        String query = "INSERT INTO posts ";
+        query += "(category, title, content, id, postdate, visitcount) ";
+        query += "VALUES(?, ?, ?, ?, NOW(), 0)";
 
         try {
             pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, postIdx);
+
+            pstmt.setString(1, category);
+            pstmt.setString(2, title);
+            pstmt.setString(3, content);
+            pstmt.setString(4, userId);
 
             pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("***** 데이터 베이스에 INSERT 중 오류 발생 *****");
+            System.out.println("***** Error " + e.getMessage() + "*****");
+        }
+
+    }
+
+    public List<PostCommentDTO> selectCommentList(int idx) {
+        List<PostCommentDTO> commentList = new ArrayList<>();
+
+        String query = "SELECT * FROM postcomment WHERE postnum = ? ORDER BY commentdate DESC ";
+
+        try {
+            pstmt = conn.prepareStatement(query);
+
+            pstmt.setInt(1, idx);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                PostCommentDTO comment = new PostCommentDTO();
+
+                comment.setCommentId(rs.getString("id"));
+                comment.setCommentContent(rs.getString("content"));
+                comment.setCommentDate(rs.getString("commentdate"));
+
+                commentList.add(comment);
+            }
 
         } catch (SQLException e) {
-            System.out.println("***** 데이터 베이스에 UPDATE 중 오류 발생 *****");
+            System.out.println("****** 데이터 베이스에서 SELECT 중 오류발생 ******");
+            System.out.println("****** Error" + e.getMessage() + " ******");
+            e.printStackTrace();
+        }
+
+        return commentList;
+    }
+
+    public void addPostComment(int idx, String userId, String content) {
+
+        String query = "INSERT INTO postcomment (postnum, id, content, commentdate) ";
+        query += "VALUES (?, ?, ?, now())" ;
+
+        try {
+            pstmt = conn.prepareStatement(query);
+
+            pstmt.setInt(1, idx);
+            pstmt.setString(2, userId);
+            pstmt.setString(3, content);
+
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("***** 데이터 베이스에 INSERT 중 오류 발생 *****");
+            System.out.println("***** Error " + e.getMessage() + "*****");
+        }
+
+    }
+
+    public void deletePostComment(int postNum, String commentId, String commentDate) {
+
+        String query = "DELETE FROM postcomment WHERE ";
+        query +=" postnum = ? AND ";
+        query += "id = ? AND ";
+        query += "commentdate = ?";
+
+        try {
+            pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, postNum);
+            pstmt.setString(2, commentId);
+            pstmt.setString(3, commentDate);
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("***** 데이터 베이스에서 DELETE 중 오류 발생 *****");
             System.out.println("***** Error : " + e.getMessage() + " *****");
             e.printStackTrace();
         }
     }
 }
+

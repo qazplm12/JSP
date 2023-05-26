@@ -11,17 +11,17 @@ public class JDBConnect {
 
     public JDBConnect() {
 
-//        this("com.mysql.cj.jdbc.Driver",
-//                "jdbc:mysql://localhost:3306/testdb?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&autoReconnect=true",
-//                "full505",
-//                "full505");
-//    }
+        this("com.mysql.cj.jdbc.Driver",
+                "jdbc:mysql://localhost:3306/testdb?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&autoReconnect=true",
+                "full505",
+                "full505");
+    }
 
-            this("com.mysql.cj.jdbc.Driver",
-                    "jdbc:mysql://localhost:3306/new_schema?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&autoReconnect=true",
-                    "full505",
-                    "full505");
-}
+//            this("com.mysql.cj.jdbc.Driver",
+//                    "jdbc:mysql://localhost:3306/new_schema?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&autoReconnect=true",
+//                    "full505",
+//                    "full505");
+//}
 
     public JDBConnect(String driver, String url, String id, String pw) {
         try {

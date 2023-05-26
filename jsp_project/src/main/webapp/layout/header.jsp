@@ -10,6 +10,7 @@
 
 <%-- 세션정보 받아오기 --%>
 <c:set var="userName" value="${sessionScope.get('userName')}"/>
+<c:set var="userId" value="${sessionScope.get('userId')}"/>
 <c:set var="failed" value="${sessionScope.get('failed')}%>"/>
 <script>
     if (<%=session.getAttribute("failed")%>) {
@@ -20,29 +21,37 @@
     }
 </script>
 <header>
-    <div class="offcanvas offcanvas-start" id="mySideMenu">
+    <div class="offcanvas offcanvas-start bg-secondary" id="mySideMenu">
         <div class="offcanvas-header">
-            <h1 class="offcanvas-title" style="text-decoration: underline">.log</h1>
+            <h1 class="offcanvas-title ms-3" style="text-decoration: underline"><i>.log</i></h1>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
-        <div class="offcanvas-body">
+        <div class="offcanvas-body p-5">
 
             <%-- 카테고리 리스트--%>
-            <h2><a href="/list.do">모든 게시물</a></h2>
-            <c:forEach items="${categories}" var="item" varStatus="loop">
-                <h2><a href="/list.do?category=${item.category}">${item.category}</a></h2>
-            </c:forEach>
+            <h2><a href="/list.do" class="my-4 link-light  text-decoration-none">모든 게시물</a></h2>
+            <ul class="list-unstyled">
+                <li class="my-3"><a href="/list.do?category=category1" class="text-decoration-none link-light "><h3>category1</h3></a></li>
+                <li class="my-3"><a href="/list.do?category=category2" class="text-decoration-none link-light "><h3>category2</h3></a></li>
+                <li class="my-3"><a href="/list.do?category=category3" class="text-decoration-none link-light "><h3>category3</h3></a></li>
+                <li class="my-3"><a href="/list.do?category=category4" class="text-decoration-none link-light "><h3>category4</h3></a></li>
+                <%-- 카테고리 편집 기능 필요--%>
+<%--                <c:forEach items="${categories}" var="item" varStatus="loop">--%>
+<%--                    <li><a href="/list.do?category=${item.category}">${item.category}</a></li>--%>
+<%--                </c:forEach>--%>
+            </ul>
         </div>
     </div>
 
     <nav class="navbar navbar-expand-md bg-dark navbar-dark">
         <%-- 햄버거 버튼 --%>
-        <button type="button" class="navbar-brand ms-3" data-bs-toggle="offcanvas" data-bs-target="#mySideMenu">
-            <img src="" alt="asd">
+        <button type="button" class="navbar-brand ms-3 btn btn-black" data-bs-toggle="offcanvas"
+                data-bs-target="#mySideMenu">
+            <i class="bi bi-list text-white fs-3 bg-black"></i>
         </button>
 
         <%-- 가운데로 정렬--%>
-        <h2 class="mx-auto"><a href="main.do">.log</a></h2>
+
         <ul class="navbar-nav ms-auto me-4">
             <c:choose>
                 <c:when test="${empty userName}">
@@ -53,8 +62,8 @@
                 <c:otherwise>
                     <c:set var="failed" value="${false}"/>
                     <%-- 로그인 시 인사말, 유저 이미지 --%>
-                    <span class="text-muted"><%=session.getAttribute("userName")%>님</span>
-                    <li class="nav-item"><a href="#" class="nav-link"><img src="" alt="이미지"></a></li>
+                    <p class="text-muted my-auto"><%=session.getAttribute("userName")%> 님</p>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fs-3 bi bi-person-circle"></i></a></li>
                     <%-- 로그인시 로그아웃 버튼--%>
                     <li class="nav-item">
                         <button type="button" id="logout-btn" class="btn btn-dark">로그아웃</button>
@@ -105,7 +114,9 @@
 
     <%-- 페이지 안내 텍스트 --%>
     <div>
-        <h1 class="my-4 text-center">메인 페이지</h1>
+        <div class="my-4 text-center">
+            <h1 class="mx-auto"><a href="main.do" class="text-black link-secondary"><i>.log</i></a></h1>
+        </div>
     </div>
 
 </header>

@@ -1,6 +1,7 @@
 package com.bitc.jsp_project.controller;
 
 import com.bitc.jsp_project.model.DAO;
+import com.bitc.jsp_project.model.PostCommentDTO;
 import com.bitc.jsp_project.model.PostsDTO;
 
 import javax.servlet.ServletException;
@@ -23,10 +24,12 @@ public class ViewController extends HttpServlet {
 
         PostsDTO board = dao.selectBoardDetails(idx);
         List<PostsDTO> categories = dao.selectCategory();
+        List<PostCommentDTO> commentList = dao.selectCommentList(idx);
         dao.updatePostVisits(idx);
         dao.dbClose();
 
 
+        req.setAttribute("commentList", commentList);
         req.setAttribute("board", board);
         req.setAttribute("categories", categories);
         req.getRequestDispatcher("/view.jsp").forward(req, resp);
