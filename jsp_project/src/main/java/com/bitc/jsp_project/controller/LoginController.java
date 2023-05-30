@@ -1,6 +1,8 @@
 package com.bitc.jsp_project.controller;
 
+import com.bitc.jsp_project.JSFunc.JSFunc;
 import com.bitc.jsp_project.model.DAO;
+import com.bitc.jsp_project.model.MembersDTO;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,18 +27,28 @@ public class LoginController extends HttpServlet {
 
         DAO dao = new DAO();
 
-        String userName = dao.checkUser(userId, userPw);
+        MembersDTO member = dao.checkUser(userId, userPw);
         dao.dbClose();
 
         HttpSession session = req.getSession();
         // 로그인 실패 시 메시지 출력하기
-        if (userName.equals("")) {
-            session.setAttribute("failed", true);
-        } else {
-            session.setAttribute("userName", userName);
+
+        if (member.getName() != null) {
+            if (member.getGrade() == 2) {
+                session.setAttribute("grade", 2);
+            } else if (member.getGrade() == 1) {
+                session.setAttribute("grade", 1);
+            }
+            session.setAttribute("userName", member.getName());
             session.setAttribute("userId", userId);
+            session.setAttribute("userEmail", member.getEmail());
             session.setMaxInactiveInterval(60 * 30);
+
+            resp.sendRedirect(from + "?" + queryStr);
+        } else {
+            JSFunc.alertBack("로그인에 실패하였습니다", resp);
         }
-        resp.sendRedirect(from + "?" + queryStr);
+
+
     }
 }

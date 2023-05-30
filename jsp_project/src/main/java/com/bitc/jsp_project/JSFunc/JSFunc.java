@@ -19,7 +19,7 @@ public class JSFunc {
 
             writer.println(js);
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
 
     }
@@ -37,7 +37,7 @@ public class JSFunc {
 
             writer.println(js);
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
     }
 }

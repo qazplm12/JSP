@@ -11,15 +11,8 @@
 <%-- 세션정보 받아오기 --%>
 <c:set var="userName" value="${sessionScope.get('userName')}"/>
 <c:set var="userId" value="${sessionScope.get('userId')}"/>
-<c:set var="failed" value="${sessionScope.get('failed')}%>"/>
-<script>
-    if (<%=session.getAttribute("failed")%>) {
-        alert('로그인 실패!');
-        <%
-            session.setAttribute("failed", false);
-        %>
-    }
-</script>
+<c:set var="userEmail" value="${sessionScope.get('userEmail')}"/>
+
 <header>
     <div class="offcanvas offcanvas-start bg-secondary" id="mySideMenu">
         <div class="offcanvas-header">
@@ -31,19 +24,23 @@
             <%-- 카테고리 리스트--%>
             <h2><a href="/list.do" class="my-4 link-light  text-decoration-none">모든 게시물</a></h2>
             <ul class="list-unstyled">
-                <li class="my-3"><a href="/list.do?category=category1" class="text-decoration-none link-light "><h3>category1</h3></a></li>
-                <li class="my-3"><a href="/list.do?category=category2" class="text-decoration-none link-light "><h3>category2</h3></a></li>
-                <li class="my-3"><a href="/list.do?category=category3" class="text-decoration-none link-light "><h3>category3</h3></a></li>
-                <li class="my-3"><a href="/list.do?category=category4" class="text-decoration-none link-light "><h3>category4</h3></a></li>
+                <li class="my-3"><a href="/list.do?category=category1" class="text-decoration-none link-light "><h3>
+                    category1</h3></a></li>
+                <li class="my-3"><a href="/list.do?category=category2" class="text-decoration-none link-light "><h3>
+                    category2</h3></a></li>
+                <li class="my-3"><a href="/list.do?category=category3" class="text-decoration-none link-light "><h3>
+                    category3</h3></a></li>
+                <li class="my-3"><a href="/list.do?category=category4" class="text-decoration-none link-light "><h3>
+                    category4</h3></a></li>
                 <%-- 카테고리 편집 기능 필요--%>
-<%--                <c:forEach items="${categories}" var="item" varStatus="loop">--%>
-<%--                    <li><a href="/list.do?category=${item.category}">${item.category}</a></li>--%>
-<%--                </c:forEach>--%>
+                <%--                <c:forEach items="${categories}" var="item" varStatus="loop">--%>
+                <%--                    <li><a href="/list.do?category=${item.category}">${item.category}</a></li>--%>
+                <%--                </c:forEach>--%>
             </ul>
         </div>
     </div>
 
-    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <nav class="navbar navbar-expand-md bg-black navbar-black">
         <%-- 햄버거 버튼 --%>
         <button type="button" class="navbar-brand ms-3 btn btn-black" data-bs-toggle="offcanvas"
                 data-bs-target="#mySideMenu">
@@ -63,7 +60,24 @@
                     <c:set var="failed" value="${false}"/>
                     <%-- 로그인 시 인사말, 유저 이미지 --%>
                     <p class="text-muted my-auto"><%=session.getAttribute("userName")%> 님</p>
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="fs-3 bi bi-person-circle"></i></a></li>
+                    <li class="nav-item d-flex ">
+                        <a href="#" class="nav-link"><i class="fs-3 bi bi-person-circle text-white"></i></a>
+                        <div class="dropdown my-auto me-3">
+                            <button class="btn btn-dark btn-sm dropdown-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false"></button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="myPage.jsp?userId=${sessionScope.get('userId')}">내 정보 보기</a></li>
+                                <c:choose>
+                                <c:when test="${sessionScope.get('grade') >= 1}">
+                                <li><a class="dropdown-item" href="/memberList.do">관리자 메뉴</a></li>
+                                </c:when>
+                                    <c:otherwise>
+
+                                    </c:otherwise>
+                                </c:choose>
+                            </ul>
+                        </div>
+                    </li>
                     <%-- 로그인시 로그아웃 버튼--%>
                     <li class="nav-item">
                         <button type="button" id="logout-btn" class="btn btn-dark">로그아웃</button>

@@ -34,7 +34,7 @@ public class WriteController extends HttpServlet {
         if (idx > 0) {
             dao.editPost(idx, category, title, content);
             dao.dbClose();
-            resp.sendRedirect("/view.do"+ "?postNum=" + idx);
+            resp.sendRedirect("/view.do" + "?postNum=" + idx);
         } else {
             dao.addPost(category, title, content, userId);
             dao.dbClose();

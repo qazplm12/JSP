@@ -2,6 +2,7 @@ package com.bitc.jsp_project.controller;
 
 import com.bitc.jsp_project.JSFunc.JSFunc;
 import com.bitc.jsp_project.model.DAO;
+import com.bitc.jsp_project.model.PostsDTO;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,29 +10,28 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
-@WebServlet(value ="/signUp.do")
-public class SignUpController extends HttpServlet {
+@WebServlet(value = "/myPage.do")
+public class InfoController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+
         String userId = req.getParameter("userId");
         String userName = req.getParameter("userName");
         String userEmail = req.getParameter("userEmail");
-        String userPass = req.getParameter("userPw");
+        String userPw = req.getParameter("userPw");
 
         DAO dao = new DAO();
-        int confirm = dao.checkUserId(userId);
 
-        if (confirm > 0) {
-            JSFunc.alertBack("이미 존재하는 ID 입니다.", resp);
-            dao.dbClose();
-        } else {
-            String result = dao.addMember(userId, userName, userEmail, userPass);
-            dao.dbClose();
-            resp.sendRedirect("/main.do");
+        dao.editMember(userId, userName, userEmail, userPw);
+        dao.dbClose();
 
-        }
+        JSFunc.alertBack("수정이 완료되었습니다.",resp);
+        resp.sendRedirect("myPage.jsp?userId=" + userId );
+
+
     }
 }

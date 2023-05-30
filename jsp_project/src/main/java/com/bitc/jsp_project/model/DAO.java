@@ -130,10 +130,10 @@ public class DAO extends JDBConnect {
     }
 
 
-    public String checkUser(String userId, String userPw) {
-        String userName = "";
+    public MembersDTO checkUser(String userId, String userPw) {
+        MembersDTO member = new MembersDTO();
 
-        String query = "SELECT count(*) AS cnt, name ";
+        String query = "SELECT count(*) AS cnt, name, email, grade ";
         query += "FROM members ";
         query += "WHERE id = ? AND pass = ? ";
 
@@ -145,7 +145,10 @@ public class DAO extends JDBConnect {
 
             while (rs.next()) {
                 if (rs.getInt("cnt") == 1) {
-                    userName = rs.getString("name");
+                    member.setName(rs.getString("name"));
+                    member.setEmail(rs.getString("email"));
+                    member.setGrade(rs.getInt("grade"));
+
                 }
             }
         } catch (SQLException e) {
@@ -153,7 +156,7 @@ public class DAO extends JDBConnect {
             System.out.println("***** Error : " + e.getMessage() + "*****");
         }
 
-        return userName;
+        return member;
     }
 
     public int checkUserId(String userId) {
@@ -206,6 +209,51 @@ public class DAO extends JDBConnect {
             System.out.println("***** Error " + e.getMessage() + "*****");
         }
         return result;
+    }
+
+    public String getEmail(String userId) {
+        String myEmail = "";
+
+        String query = "SELECT email FROM members WHERE id = ? ";
+
+        try {
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, userId);
+
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                myEmail = rs.getString("email");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("SELECT 사용 시 오류가 발생했습니다");
+            e.printStackTrace();
+        }
+
+
+        return myEmail;
+    }
+
+    public void editMember(String userId, String userName, String userEmail, String userPass) {
+
+        String query = "UPDATE members ";
+        query += "SET name = ?, email = ?, pass = ? ";
+        query += "WHERE id = ?";
+
+        try {
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, userName);
+            pstmt.setString(2, userEmail);
+            pstmt.setString(3, userPass);
+            pstmt.setString(4, userId);
+
+            pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println("***** 데이터 베이스에 UPDATE 중 오류 발생 *****");
+            System.out.println("***** Error " + e.getMessage() + "*****");
+        }
+
     }
 
     public void editPost(int idx, String category, String title, String content) {
@@ -310,7 +358,7 @@ public class DAO extends JDBConnect {
     public void addPostComment(int idx, String userId, String content) {
 
         String query = "INSERT INTO postcomment (postnum, id, content, commentdate) ";
-        query += "VALUES (?, ?, ?, now())" ;
+        query += "VALUES (?, ?, ?, now())";
 
         try {
             pstmt = conn.prepareStatement(query);
@@ -330,7 +378,7 @@ public class DAO extends JDBConnect {
     public void deletePostComment(int postNum, String commentId, String commentDate) {
 
         String query = "DELETE FROM postcomment WHERE ";
-        query +=" postnum = ? AND ";
+        query += " postnum = ? AND ";
         query += "id = ? AND ";
         query += "commentdate = ?";
 
@@ -346,6 +394,37 @@ public class DAO extends JDBConnect {
             System.out.println("***** Error : " + e.getMessage() + " *****");
             e.printStackTrace();
         }
+    }
+
+
+    public List<MembersDTO> selectMemberList() {
+        List<MembersDTO> memberList = new ArrayList<>();
+
+        String query = "SELECT id, name, email, grade FROM members ORDER BY grade DESC";
+
+        try {
+            pstmt = conn.prepareStatement(query);
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                MembersDTO member = new MembersDTO();
+
+                member.setId(rs.getString("id"));
+                member.setName(rs.getString("name"));
+                member.setEmail(rs.getString("email"));
+                member.setGrade(rs.getInt("grade"));
+
+                memberList.add(member);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("****** 데이터 베이스에서 SELECT 중 오류발생 ******");
+            System.out.println("****** Error" + e.getMessage() + " ******");
+            e.printStackTrace();
+        }
+
+        return memberList;
     }
 }
 

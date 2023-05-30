@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%--
   Created by IntelliJ IDEA.
   User: admin
@@ -25,7 +26,7 @@
                 <h4 class="ms-2">최신 게시물 </h4>
                 <a href="list.do" class="link-secondary text-decoration-none"><strong>더보기</strong></a>
             </div>
-            <div class="row">
+            <div class="row ms-4">
                 <c:choose>
                     <c:when test="empty boardList">
                         <h1>등록된 게시물이 없습니다.</h1>
@@ -33,13 +34,8 @@
                     <c:otherwise>
                         <c:forEach items="${boardList}" var="item" varStatus="loop" end="7">
                             <div class="col-3 my-4">
-                                    <%--                            <p class="py-4">${item.postDate}</p>--%>
-                                    <%-- 최신 게시물 표시 --%>
-                                    <%-- <c:set var="today" value="<%= new java.util.Date() %>"/>--%>
-                                    <%-- <fmt:formatDate value="${today}" pattern="MM-dd (HH:mm)" var="now"/>--%>
-                                    <%-- <span></span>--%>
                                 <a href="/view.do?postNum=${item.postNum}">
-                                    <img src="" alt="이미지" width="200px" height=150px">
+                                    <img src="resource/No-Image-Placeholder.svg.png" alt="이미지" width="200px" height=150px">
                                 </a>
                                 <p class="m-0">${item.postTitle}</p>
                                 <span class="text-muted">작성자 ${item.postWriter}</span>

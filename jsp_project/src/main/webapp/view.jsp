@@ -55,6 +55,9 @@
                         <button type="submit" class="btn btn-primary opacity-75">수정</button>
                         <button type="button" class="btn btn-danger opacity-75 mx-2" id="del-btn">삭제</button>
                     </c:when>
+                    <c:when test="${sessionScope.get('grade') >= 1}">
+                        <button type="button" class="btn btn-danger opacity-75 mx-2" id="del-btn">삭제</button>
+                    </c:when>
                     <c:otherwise>
                     </c:otherwise>
                 </c:choose>
